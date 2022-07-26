@@ -1,0 +1,40 @@
+import DashBoardTemplate from '../../components/dashboard/Template'
+import {decryptString} from '../../functions'
+import {useContext} from 'react'
+
+import {GlobalContext} from '../../contexts/Global'
+
+export default () => {
+	return (
+		<DashBoardTemplate>
+			
+		</DashBoardTemplate>		
+	)
+}
+
+export const getServerSideProps = (context) => {
+	const {req: {cookies}} = context
+	const cookie = cookies['OLLYMANN_INVENTORY'] ? JSON.parse(decryptString(cookies['OLLYMANN_INVENTORY'])) : undefined
+
+	if(!cookie){
+		return {
+			redirect: {
+				destination: '/login'
+			}
+		}
+	}
+	else if(cookie.account_type === 'admins'){
+		return {
+			redirect: {
+				destination: '../admin/dashboard'
+			}
+		}	
+	}
+
+	return {
+		props: {
+			userData: cookie,
+			accountType: cookie.account_type
+		}
+	}
+}
