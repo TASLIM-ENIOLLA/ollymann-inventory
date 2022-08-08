@@ -1,7 +1,7 @@
 import {useState, useContext, useEffect} from 'react'
 import DashBoardTemplate from '../../components/dashboard/Template'
 import {decryptString} from '../../functions'
-import {api_routes, server} from '../../config'
+import {api_routes} from '../../config'
 import {GlobalContext} from '../../contexts/Global'
 
 export default () => {
@@ -27,11 +27,11 @@ export default () => {
 					</div>
 				</div>
 				<div className = 'col-12 mb-5'>
-					<ProfileImage src = {userData?.profile_img} />
+					<ProfileImage />
 				</div>
 				<div className = 'mb-5'>
 					<div className = 'row px-4'>
-						<div className = 'bg-white pt-5 pb-4 mb-5 fo-s-15 px-3 col-12 rounded-1x shadow'>
+						<div className = 'bg-white pt-5 pb-4 mb-5 px-4 col-12 rounded-1x shadow'>
 							<div className = 'row'>
 								<div className = 'col-lg-6 mb-4'>
 									<div className = 'text-capitalize bold letter-spacing-1 mb-2'>first name</div>
@@ -59,10 +59,10 @@ export default () => {
 								</div>
 							</div>
 						</div>
-						<div className = 'bg-white pt-5 pb-4 mb-5 fo-s-15 px-3 col-12 rounded-1x shadow'>
+						<div className = 'bg-white pt-5 pb-4 mb-5 px-3 col-12 rounded-1x shadow'>
 							<div className = 'col-12 mb-2'>
 								<div className = 'text-capitalize bold letter-spacing-1 mb-2'>change password</div>
-								<p className = 'mb-4 text-muted fo-s-15'>A link will be sent to your email. Open link to change password</p>
+								<p className = 'mb-4 text-muted'>A link will be sent to your email. Open link to change password</p>
 							</div>
 							<div className = 'col-12 mb-2'>
 								<input type = 'button' className = 'py-4 rounded-1x text-white bold letter-spacing-1 shadow-sm px-5 theme-bg border text-capitalize flex-h flex-1' defaultValue = 'request email' />
@@ -75,34 +75,18 @@ export default () => {
 	)
 }
 
-const ProfileImage = ({src = ''}) => {
-	const [updateProfileImg, setUpdateProfileImg] = useState(false)
-	const [profileImage, setProfileImg] = useState((
-		(src)
-		? `${server.backend.url}/images/${src[0]}`
-		: `${server.frontend.url}/images/user_002.png`
-	))
-
+const ProfileImage = () => {
 	return (
 		<div className = 'rounded-circle user-image bg-white shadow border po-rel' style = {{width: '200px', height: '200px'}}>
-			<label title = {`${updateProfileImg ? 'Upload image' : 'Click to select new profile picture'}`} className = 'cursor-pointer rounded-circle flex-h a-i-c j-c-c theme-bg po-abs right-0' style = {{bottom: '10%', right: '5%', width: '30px', height: '30px'}}>
-				<span className = 'bi bi-pencil fo-s-15 text-white'></span>
-				<input onChange = {(e) => {
-					if(e.target.files[0]){
-						const fileReader = new FileReader()
-						fileReader.readAsDataURL(e.target.files[0])
-
-						fileReader.onload = () => {
-						  setProfileImg(fileReader.result)
-						}
-					}
-				}} hidden = {true} type = 'file' accept = ".jpg, .gif, .png, .jpeg" className = 'po-abs' />
+			<label title = 'Click to select new profile picture' className = 'cursor-pointer rounded-circle flex-h a-i-c j-c-c theme-bg po-abs right-0' style = {{bottom: '10%', right: '5%', width: '30px', height: '30px'}}>
+				<span className = 'bi bi-pencil text-white'></span>
+				<input hidden = {true} type = 'file' accept = ".jpg, .gif, .png, .jpeg" className = 'po-abs' />
 			</label>
 			<style jsx>{`
 				.user-image{
 					background-size: cover;
 					background-position: center;
-					background-image: url(${profileImage})
+					background-image: url(/images/user_002.png)
 				}
 			`}</style>
 		</div>
@@ -120,10 +104,10 @@ export const getServerSideProps = (context) => {
 			}
 		}
 	}
-	else if(cookie.account_type === 'admins'){
+	else if(cookie.account_type === 'users'){
 		return {
 			redirect: {
-				destination: '../admin/dashboard'
+				destination: '../user/dashboard'
 			}
 		}	
 	}

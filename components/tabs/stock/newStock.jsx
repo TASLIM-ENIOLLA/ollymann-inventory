@@ -1,16 +1,19 @@
 import {useContext, useEffect, useState} from 'react'
-import {NewStockContext} from '../../contexts/tabs/newStock'
-import {notify} from '../../components/popups'
-import {api_routes} from '../../config'
-import {Button} from '../../components/authentication'
+import {StockContext} from '../../../contexts/tabs/stock'
+import {notify} from '../../../components/popups'
+import {api_routes} from '../../../config'
+import {Button} from '../../../components/authentication'
+import Currency from '../../../components/currency'
 
 export default () => {
 	const [productsList, setProductsList] = useState([])
 	const [savedStock, setSavedStock] = useState(false)
-	const {newStockTab, setNewStockTab, stocksList, updateStocksList} = useContext(NewStockContext)
+	const {newStock: {visible, toggle, addNewStock}} = useContext(StockContext)
 	const [formData, setFormData] = useState({
 		productID: '',
 		productQuantity: '',
+		productName: '',
+		productPrice: '',
 		productBulkUnit: '',
 		customerName: '',
 		customerEmail: '',
@@ -27,17 +30,40 @@ export default () => {
 	}, [])
 	
 	useEffect(async() => {
-		if(!newStockTab){
-			setFormData({productID: '', productQuantity: '', productBulkUnit: '', customerName: '', customerEmail: '', customerPhone: '', deliveryAddress: '', notes: ''})
+		if(!visible){
+			setFormData({productID: '', productName: '', productPrice: '0', productQuantity: '', productBulkUnit: '', customerName: '', customerEmail: '', customerPhone: '', deliveryAddress: '', notes: ''})
 		}
-	}, [newStockTab])
+	}, [visible])
+
+	useEffect(async () => {
+		if(formData.productID !== ''){
+			const req = await fetch(`${api_routes.user.getProductsList}?productID=${formData.productID}`)
+			const {data} = await req.json()
+
+			setFormData({
+				...formData,
+				productPrice: data.price,
+				productName: data.name
+			})
+		}
+		else{
+			setFormData({
+				...formData,
+				productPrice: '',
+				productName: ''
+			})
+		}
+	}, [formData.productID])
 
 	return (
-		<div className = {`${newStockTab ? 'animated fadeIn' : 'd-none'} w-100 overflow-y-auto h-100 po-fixed top-0 left-0 p-5`} style = {{zIndex: 1000, background: 'rgba(0,0,0,.5)'}}>
-			<div className = 'mx-auto p-5 bg-white my-5 rounded-2x' style = {{maxWidth: '750px'}}>
-				<h5 className = 'bold text-capitalize text-muted'>add new stock</h5>
+		<div className = {`${visible ? 'animated fadeIn' : 'd-none'} w-100 overflow-y-auto h-100 po-fixed top-0 left-0 p-5`} style = {{zIndex: 1000, background: 'rgba(0,0,0,.5)'}}>
+			<div className = 'mx-auto p-5 bg-white overflow-0 my-5 rounded-2x po-rel' style = {{maxWidth: '750px'}}>
+				<button onClick = {() => toggle()} className = 'po-abs border-0 flex-h btn btn-danger a-i-c j-c-c top-0 right-0 px-3 py-2'>
+					<span className = 'bi bi-x fa-2x text-white'></span>
+				</button>
+				<h5 className = 'bold text-capitalize text-center text-muted'>add new stock</h5>
 				<div className = 'row mt-5'>
-					<div className = 'col-lg-6 col-md-12'>
+					<div className = 'col-lg-6 col-md-12 mb-4'>
 						<p className = 'bold theme-color mb-2'>Select product *</p>
 						<select onChange = {(e) => setFormData({
 							...formData,
@@ -58,6 +84,14 @@ export default () => {
 					<div className = 'col-lg-6 col-md-12 mb-4'>
 						<p className = 'bold theme-color mb-2'>Product quantity {formData.productBulkUnit !== '' ? `(${formData.productBulkUnit})` : ''} *</p>
 						<input value = {`${formData.productQuantity}`} onChange = {(e) => setFormData({...formData, productQuantity: e.target.value})} type = 'number' min = '1' step = '.5' placeholder = 'select quantity *' className = 'bg-clear text-muted text-capitalize border d-block w-100 rounded p-3' />
+					</div>
+					<div className = 'col-12 mb-4'>
+						<p className = 'bold theme-color mb-2'>Product price</p>
+						<input value = {`${Currency} ${new Intl.NumberFormat().format(formData.productPrice)}`} onChange = {() => false} disabled = {true} type = 'text' placeholder = 'Product price' className = 'bg-light text-muted text-capitalize disabled border d-block w-100 rounded p-3' />
+					</div>
+					<div className = 'col-12 mb-4'>
+						<p className = 'bold theme-color mb-2'>Price total</p>
+						<input value = {`${Currency} ${new Intl.NumberFormat().format(formData.productPrice * formData.productQuantity)}`} onChange = {() => false} disabled = {true} type = 'text' placeholder = 'Product price' className = 'bg-light text-muted text-capitalize disabled border d-block w-100 rounded p-3' />
 					</div>
 				</div>
 				<div className = 'row'>
@@ -89,22 +123,25 @@ export default () => {
 									type: type !== 'error' ? type : 'danger',
 									callback: () => {
 										if(type === 'success'){
-											setFormData({productID: '', productQuantity: '', productBulkUnit: '', customerName: '', customerEmail: '', customerPhone: '', deliveryAddress: '', notes: ''})
-											updateStocksList([stock_data, ...stocksList])
+											// setFormData({productID: '', productQuantity: '', productBulkUnit: '', customerName: '', customerEmail: '', customerPhone: '', deliveryAddress: '', notes: ''})
+											addNewStock(stock_data)
 											setSavedStock(true)
 										}
 									}
 								}))} type = 'button' className = {`${(
-										(![formData.productID, formData.productQuantity, formData.customerName, formData.customerPhone].includes(''))
+										(![formData.productID, formData.productQuantity, formData.customerName, formData.customerPhone].includes('') && !savedStock)
 										? ''
 										: 'disabled'
 									)} btn btn-success user-select-0 cursor-pointer text-capitalize bold letter-spacing-1 border d-block w-100 text-white rounded-1x p-4`}>save</Button>
 							</div>
 							<div className = 'col-6 mb-3'>
-								<input onClick = {() => setNewStockTab(false)} type = 'button' value = 'cancel' className = ' btn btn-danger cursor-pointer text-capitalize bold letter-spacing-1 border d-block w-100 text-white rounded-1x p-4' />
+								<input onClick = {() => toggle()} type = 'button' value = 'cancel' className = ' btn btn-secondary cursor-pointer text-capitalize bold letter-spacing-1 border d-block w-100 text-white rounded-1x p-4' />
 							</div>
-							<div className = {`${savedStock ? '' : 'disabled user-select-0 pointer-events-0 transit'} col-12`}>
-								<input onClick = {() => new Promise(resolved => resolved(window.print())).then(e => setSavedStock(false))} type = 'button' value = 'print receipt' className = ' btn theme-bg cursor-pointer text-capitalize bold letter-spacing-1 border d-block w-100 text-white rounded-1x p-4' />
+							<div className = {`${savedStock ? '' : 'disabled transit'} col-12`}>
+								<button onClick = {() => new Promise(resolved => {
+									window.print()
+									resolved({status: 'Printing...'})
+								})} type = 'button' className = ' btn theme-bg cursor-pointer text-capitalize bold letter-spacing-1 border d-block w-100 text-white rounded-1x p-4'>print receipt</button>
 							</div>
 						</div>
 					</div>

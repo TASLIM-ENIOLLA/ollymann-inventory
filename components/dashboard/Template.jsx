@@ -16,16 +16,13 @@ const firstLetterToUpperCase = (str) => {
 }
 
 
-export default ({children}) => {
+export default ({children, title}) => {
     const {userData: {f_name, l_name}, accountType} = useContext(GlobalContext)
     const [sideBarState, setSideBarState] = useState(false)
     const {asPath} = useRouter()
 
     return (
         <>
-            {/*<Head>
-                <title>{`${firstLetterToUpperCase(asPath.replace(/[\/\]]/g, '').replace('-', ' ').replace(/[\[]/g, ' - '))}`}</title>
-            </Head>*/}
             <div className="po-rel vh100 bg-light flex-h vw100">
                 <SideBarContext.Provider value = {{value: sideBarState, updater: setSideBarState}}>
                     <SideBarContext.Consumer>{
@@ -34,7 +31,7 @@ export default ({children}) => {
                         )
                     }</SideBarContext.Consumer>
                 </SideBarContext.Provider>
-                <div className = 'flex-1 po-rel py-4 px-5 h-100 overflow-y-auto'>
+                <div className = 'flex-1 po-rel py-4 px-4 px-md-5 h-100 overflow-y-auto'>
                     <div>
                         <div className="flex-h py-3 a-i-c">
                             <div className = 'col-d-block col-md-d-none'>
@@ -47,17 +44,12 @@ export default ({children}) => {
                             </div>
                         </div>
                     </div>
-                    <div className = 'mb-5 bold fo-s-15 text-capitalize theme-color'>{asPath.match(/(\w+\-)*\w+$/)[0].replace(/\-/g, ' ')}</div>
+                    <div className = 'mb-5 bold fo-s-15 text-capitalize theme-color'>{title ? title : asPath.match(/(\w+\-)*\w+$/)[0].replace(/\-/g, ' ')}</div>
                     <div>
                         {children}
                     </div>
                 </div>
                 <style>{`
-                    .user-image{
-                        background-size: cover;
-                        background-position: center;
-                        background-image: url(/images/user_002.png);
-                    }
                     .active-menu{
                         background: rgba(255,255,255,.3)
                     }

@@ -76,9 +76,11 @@ export const notify = ({message = '', callback, type = 'light', duration = 3000}
             </div>
         )
     }
-
-    ReactDOM.render(
-        <Notify />,
-        document.querySelector('#__popup')
-    )
+    
+    if(document.querySelector('#__popup').children.length < 1){
+        ReactDOM.render(
+            <Notify />,
+            document.querySelector('#__popup')
+        )
+    }
 }

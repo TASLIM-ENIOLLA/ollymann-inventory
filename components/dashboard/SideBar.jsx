@@ -10,10 +10,10 @@ export default ({sideBarState, setSideBarState}) => {
 
 	return (
 		<>
-            <div className = {`${(sideBarState) ? 'translate-0' : 'translate-negative-100'} transit po-abs top-0 left-0 theme-bg h-100 overflow-y-auto`} style = {{zIndex: '1000', minWidth: '250px'}}>
-                <div className = 'py-3 px-4 flex-h a-i-c j-c-space-between'>
+            <div className = {`${(sideBarState) ? 'translate-0' : 'translate-negative-100'} transit po-abs top-0 left-0 theme-bg h-100 overflow-y-auto`} style = {{zIndex: '1000', minWidth: '220px'}}>
+                <div className = 'py-3 px-4 mt-4 flex-h a-i-c j-c-space-between'>
                     <div>
-                        {/*<img src="/img/logo.png" width = '60' alt=""/>*/}
+                        <img src="/images/Ollymann table water.jpg" width = '60' alt=""/>
                         <span className = 'fa-2x bi bi-user text-white'></span>
                     </div>
                     <div className = 'py-3' onClick = {() => setSideBarState(false)}>
@@ -35,10 +35,10 @@ export default ({sideBarState, setSideBarState}) => {
                     )
                 }</div>
             </div>
-            <div className = 'theme-bg col-d-none col-md-d-block h-100 overflow-y-auto' style = {{minWidth: '250px'}}>
-                <div className = 'py-5 px-4'>
+            <div className = 'theme-bg col-d-none col-md-d-block h-100 overflow-y-auto' style = {{minWidth: '220px'}}>
+                <div className = 'py-3 px-4 mt-4'>
                 	<span className = 'fa-2x bi bi-user text-white'></span>
-                    {/*<img src="/img/logo.png" width = '60' alt=""/>*/}
+                    <img src="/images/Ollymann table water.jpg" width = '60' alt=""/>
                 </div>
                 <div className="py-5 side-bar-links overflow-x-0">{
                     URL.map(

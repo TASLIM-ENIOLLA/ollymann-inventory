@@ -15,9 +15,9 @@ export default () => {
 			<div className = 'container'>
 				<div className = 'row py-5'>
 					<div className = 'py-5 col-12'>
-						<div className = 'border mx-auto rounded-1x p-5' style = {{maxWidth: '550px'}}>
+						<div className = 'border mx-auto rounded-1x p-5' style = {{maxWidth: '450px'}}>
 							<div className = 'text-center pb-5'>
-								<h1 className = 'text-primary bold mb-3'>Log In</h1>
+								<h1 className = 'theme-color bold mb-3'>Log In</h1>
 								<h5 className = 'bold text-muted'>Log in to dashboard</h5>
 							</div>
 							<form className = 'pt-5'>
@@ -41,7 +41,7 @@ export default () => {
 												path: '/'
 											}).then(() => window.location = `./${data.account_type.replace(/s$/, '')}/dashboard`)
 										})
-									)} type = 'submit' className = 'd-block fo-s-16 outline-0 w-100 bg-primary shadow text-capitalize rounded-1x border-0 py-4 text-white px-3'>log in</Button>
+									)} type = 'submit' className = 'd-block outline-0 w-100 theme-bg shadow text-uppercase rounded-lg border-0 text-white p-4'>log in</Button>
 								</div>
 							</form>
 						</div>
